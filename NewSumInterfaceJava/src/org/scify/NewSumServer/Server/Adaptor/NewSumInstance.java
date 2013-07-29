@@ -41,6 +41,14 @@ public class NewSumInstance {
         envelope.dotNet = false;
     }
 
+    /**
+     * Returns the list of default sources the server uses as a LinksData object.
+     * 
+     * LinksData is of form ArrayList <LinkData>
+     * @throws SOAPException,IOException XMLParserException.
+     * @return The links (i.e. RSS feeds) and their assigned labels.
+     * @see NewSumWS.pdf for more info.
+     */
     public static LinksData getLinkLabels() throws Exception{
         SoapObject request = new SoapObject(NAMESPACE, GET_LINK_LABELS);
         envelope.setOutputSoapObject(request);
@@ -50,6 +58,18 @@ public class NewSumInstance {
         return new LinksData(sLinks);
     }
     
+    /**
+     * Traverses the User's Sources preference and returns the Categories that
+     * correspond to these Sources as a CategoriesData object. 
+     * 
+     * CategoriesData is an ArrayList <String> containing the categories.
+     * @param alUserSources The user selected Sources passed as an ArrayList of strings.
+     * If "All" is the first string in the ArrayList or null is passed as alUserSources
+     * , all default sources are considered valid.
+     * @throws SOAPException,IOException XMLParserException.
+     * @return the categories that correspond to the specified user sources.
+     * @see NewSumWS.pdf for more info.
+     */
     public static CategoriesData getCategories(ArrayList <String> alUserSources) throws Exception{
         SoapObject request = new SoapObject(NAMESPACE, READ_CATEGORIES_METHOD);
         request.addProperty("sUserSources", JSon.jsonize(alUserSources));
@@ -60,6 +80,20 @@ public class NewSumInstance {
         return new CategoriesData(sCategories);
     }
 
+    /**
+     * Returns the summary for the specified topicID relevant to the selected user sources as a
+     * SummaryData.
+     * 
+     * The SummaryData object contains an ArrayList of sources containing the user selected sources
+     * and an ArrayList of snippets containing the returned summaries.
+     * @param sTopicID The topic ID of interest as a String.
+     * @param alUserSources The user selected Sources passed as an ArrayList of strings.
+     * If "All" is the first string in the ArrayList or null is passed as alUserSources
+     * , all default sources are considered valid.
+     * @throws SOAPException,IOException XMLParserException.
+     * @return The summary that corresponds to the specified ID and user sources.
+     * @see NewSumWS.pdf for more info.
+     */
     public static SummaryData getSummary(String sTopicID,ArrayList <String> alUserSources) throws Exception{
         SoapObject request = new SoapObject(NAMESPACE, GET_SUMMARY_METHOD);
         request.addProperty("sCategory", JSon.jsonize(sTopicID));
@@ -70,7 +104,21 @@ public class NewSumInstance {
         String sSummary=resultsRequestSOAP.getProperty("return").toString();
         return new SummaryData(sSummary);
     }
- 
+
+    /**
+     * Searches the Topic index for the specified keyword, and returns all topics
+     * that correspond to that keyword as a TopicsData object.
+     * 
+     * The topics are sorted by the number of
+     * appearances of the keyword. 
+     * @param sKeyword the user search entry as a String.
+     * @param alUserSources The user selected Sources passed as an ArrayList of strings.
+     * If "All" is the first string in the ArrayList or null is passed as alUserSources
+     * , all default sources are considered valid.
+     * @throws SOAPException,IOException XMLParserException.
+     * @return the topics found for the specified keyword.
+     * @see NewSumWS.pdf for more info.
+     */
     public static TopicsData getTopicByKeyword(String sKeyword,
                                                ArrayList <String> alUserSources) throws Exception{
         SoapObject request = new SoapObject(NAMESPACE, GET_TOPICS_BY_KEYWORD);
