@@ -15,12 +15,22 @@ public class JSon {
     protected static Gson json=new Gson();
  
     /**
-    * Class used as wrapper for Gson with specific return data types
+     * Returns a String of the JSON format of the object
+     * 
+     * @param object any object to be converted.
+     * @return JSON format of object.
      */
     public static String jsonize(Object object){
         return json.toJson(object);
     } 
-   
+
+    /**
+     * Returns an instance of the Object relevant to the JSON string
+     * 
+     * @param jsonstring the String in json format to be converted.
+     * @param classOfT the template the object corresponds to.
+     * @return instance of object corresponding to the JSON String.
+     */
     public static <T> T unjsonize(String jsonstring, Class<T> classOfT) throws Exception{
         return json.fromJson(jsonstring, classOfT);
     }

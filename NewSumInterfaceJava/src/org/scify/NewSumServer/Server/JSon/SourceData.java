@@ -16,6 +16,14 @@ public class SourceData {
     private String name;
     private ArrayList <String> imageUrls;
 
+    /**
+     * Make new SourceData from input
+     * 
+     * @param url the String containing the url source.
+     * @param name the name of the source - a label.
+     * @param imageUrls url's pointing to images to be used with summary
+     * @return a instance of SourceData corresponding to input.
+     */
     public SourceData(String url, String name, ArrayList<String> imageUrls) {
         this.url = url;
         this.name = name;
@@ -28,6 +36,14 @@ public class SourceData {
         return hash;
     }
 
+    /**
+     * Check if the two objects are equal
+     * 
+     * @param url the String containing the url source.
+     * @param name the name of the source - a label.
+     * @param imageUrls url's pointing to images to be used with summary
+     * @return a instance of SourceData corresponding to input.
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

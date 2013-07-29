@@ -13,20 +13,40 @@ public class LinkLabelData{
         private String link;
         private String sourceName;
 
-        public LinkLabelData(){
-            
-        }
-        
-        public LinkLabelData(String link, String sourceName) {
-            this.link = link;
-            this.sourceName = sourceName;
-        }
-       
+    /**
+     * Make new LinkLabelData
+     * 
+     * @return a empty instance of LinkLabelData.
+     */
+    public LinkLabelData(){
 
+    }
+
+    /**
+     * Make new LinkLabelData from input link and label
+     * 
+     * @return a new instance of LinkLabelData with the data.
+     */
+    public LinkLabelData(String link, String sourceName) {
+        this.link = link;
+        this.sourceName = sourceName;
+    }
+       
+    /**
+     * Get the link
+     * 
+     * @return the link which is a url. A url is the text you click on at the top of the browser
+     * or youtube when you copy paste videos.
+     */
     public String getLink() {
         return link;
     }
 
+    /**
+     * Get the sourceName
+     * 
+     * @return the label corresponding to the link usually some kind of name.
+     */
     public String getSourceName() {
         return sourceName;
     }
