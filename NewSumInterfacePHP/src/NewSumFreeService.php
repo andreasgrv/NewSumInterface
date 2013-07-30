@@ -13,8 +13,27 @@ class NewSumFreeService extends SoapClient {
     public function NewSumFreeService($wsdl) {
         parent::__construct($wsdl);
     }
+    
     /**
      *  
+     *
+     * @return array(linkLabels) returns linkLabel elements that correspond to the sources used in NewSum.
+     * See documentation for more info on the array(linkLabels) structure.
+     */
+    public function getLinkLabels() {
+        $post=array('parameters' => array());
+        try { 
+            $response = $this->__soapCall('getLinkLabels',$post)->return;
+        } catch(SoapFault $client) { 
+            printf("<br/> Request = %s </br>", htmlspecialchars($client->faultcode));
+            print $client->getMessage(); 
+            print $client->getTraceAsString(); 
+        }
+        return json_decode($response);
+    }
+    
+    /**
+     *
      *
      * @param array(string) $userSources Contains user sources. Can contain  the
      * string "All" or can be initialized to null in order to use all the sources.
@@ -34,21 +53,21 @@ class NewSumFreeService extends SoapClient {
         return json_decode($response);
     }
 
-
-    /**
-     *  
+    /** 
+     *
      *
      * @param array(string) $userSources Contains user sources. Can contain  the
      * string "All" or can be initialized to null in order to use all the sources.
      * The whole list can also be obtained by calling getLinkLabels and processing the links. 
-     * @param String $category The category relevant to which to get topicIDs.
-     * @return array(string) Array of topicIDs according to search.
+     * @param String $category The category relevant to which to get topicTitles.
+     * @return array(Topics) Array of Topics according to search.
+     * See documentation for more info on the array(Topics) structure.
      */
-    public function getTopicIDs($userSources,$category) {
+    public function getTopics($userSources,$category) {
         $post=array('parameters' => array('sUserSources' => json_encode($userSources),
             'sCategory' => json_encode($category)));
         try { 
-            $response = $this->__soapCall('getTopicIDs',$post)->return;
+            $response = $this->__soapCall('getTopics',$post)->return;
         } catch(SoapFault $client) { 
             printf("<br/> Request = %s </br>", htmlspecialchars($client->faultcode));
             print $client->getMessage(); 
@@ -78,48 +97,7 @@ class NewSumFreeService extends SoapClient {
             }
             return json_decode($response);
     }
-
-    /**
-     *  
-     *
-     * @return array(linkLabels) returns linkLabel elements that correspond to the sources used in NewSum.
-     * See documentation for more info on the array(linkLabels) structure.
-     */
-    public function getLinkLabels() {
-        $post=array('parameters' => array());
-        try { 
-            $response = $this->__soapCall('getLinkLabels',$post)->return;
-        } catch(SoapFault $client) { 
-            printf("<br/> Request = %s </br>", htmlspecialchars($client->faultcode));
-            print $client->getMessage(); 
-            print $client->getTraceAsString(); 
-        }
-        return json_decode($response);
-    }
-
-    /**
-     *  
-     *
-     * @param array(string) $userSources Contains user sources. Can contain  the
-     * string "All" or can be initialized to null in order to use all the sources.
-     * The whole list can also be obtained by calling getLinkLabels and processing the links. 
-     * @param String $category The category relevant to which to get topicTitles.
-     * @return array(topicTitles) Array of topicTitles according to search.
-     * See documentation for more info on the array(topicTitles) structure.
-     */
-    public function getTopicTitles($userSources,$category) {
-        $post=array('parameters' => array('sUserSources' => json_encode($userSources),
-            'sCategory' => json_encode($category)));
-        try { 
-            $response = $this->__soapCall('getTopicTitles',$post)->return;
-        } catch(SoapFault $client) { 
-            printf("<br/> Request = %s </br>", htmlspecialchars($client->faultcode));
-            print $client->getMessage(); 
-            print $client->getTraceAsString(); 
-        }
-        return json_decode($response);
-    }
-
+    
     /**
      *  
      *
