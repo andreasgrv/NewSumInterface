@@ -17,13 +17,13 @@ import java.util.ArrayList;
 public class TopicsData extends ArrayList <TopicData> implements JSonizable{
 
     /**
-     * Make new TopicsData
+     * Make new empty TopicsData 
      * 
-     * @return a empty instance of TopicsData.
+     * @return a empty instance of TopicData.
      */
-    public TopicsData() {
+    public TopicsData(){ //you may want to fill it up using add
+        
     }
-
     /**
      * Make new TopicsData from JSON String
      * 

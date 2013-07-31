@@ -66,7 +66,7 @@ public class SummaryData implements JSonizable{
      * 
      * @return ArrayList of Strings containing the snippets of the summary
      */
-    public ArrayList<String> getSummary(){
+    public ArrayList<String> getSummaries(){
         ArrayList<String> summaries=new ArrayList();
         for(SnippetData each : snippets){
             summaries.add(each.getSummary());

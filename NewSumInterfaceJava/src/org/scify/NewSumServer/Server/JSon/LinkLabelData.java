@@ -12,24 +12,17 @@ package org.scify.NewSumServer.Server.JSon;
 public class LinkLabelData{
         private String link;
         private String sourceName;
-
-    /**
-     * Make new LinkLabelData
-     * 
-     * @return a empty instance of LinkLabelData.
-     */
-    public LinkLabelData(){
-
-    }
+        private String sourceLogoUrl;
 
     /**
      * Make new LinkLabelData from input link and label
      * 
      * @return a new instance of LinkLabelData with the data.
      */
-    public LinkLabelData(String link, String sourceName) {
+    public LinkLabelData(String link, String sourceName, String sourceLogoUrl) {
         this.link = link;
         this.sourceName = sourceName;
+        this.sourceLogoUrl=sourceLogoUrl;
     }
        
     /**

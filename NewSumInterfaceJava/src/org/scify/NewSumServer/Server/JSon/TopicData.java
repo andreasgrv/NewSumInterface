@@ -18,16 +18,6 @@ public class TopicData{
         private Calendar date;
         private int sourcesNum;
         private ArrayList <String> imageURLs;
-
-    /**
-     * Make new TopicData
-     * 
-     * @return a empty instance of TopicData.
-     */
-    public TopicData() {
-            
-        }
-
     
     /**
      * Make new TopicData from input

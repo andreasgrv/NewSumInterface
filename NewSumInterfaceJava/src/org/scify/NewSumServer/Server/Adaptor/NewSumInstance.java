@@ -4,8 +4,17 @@
  */
 package org.scify.NewSumServer.Server.Adaptor;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import javax.xml.soap.SOAPException;
 import org.ksoap2.SoapEnvelope;
+import org.ksoap2.SoapFault;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
@@ -21,19 +30,31 @@ import org.scify.NewSumServer.Server.JSon.TopicsData;
  */
 public class NewSumInstance {
 
-    private static final String SOAP_ACTION =
-            "http://143.233.226.97:28080/NewSumFreeService/NewSumFreeService";
-    private static final String NAMESPACE = "http://NewSumFreeService.Server.NewSumServer.scify.org/";
-    public static final String URL = "";
+    private static final String FILENAME = "properties.dat";
     private static final String GET_LINK_LABELS = "getLinkLabels";
     private static final String READ_CATEGORIES_METHOD = "getCategories";
     private static final String READ_TOPICS_METHOD = "getTopics";
     private static final String GET_TOPICS_BY_KEYWORD = "getTopicsByKeyword";
     private static final String GET_SUMMARY_METHOD = "getSummary";
+    private static final String[] FILE_SYNTAX= {"wsdl:","namespace:","soap:"}; //order matters!
     private static HttpTransportSE androidHttpTransport;
     private static SoapSerializationEnvelope envelope;
+    private static String url;
+    private static String namespace;
+    private static String soapAction;
+    private static boolean initialized=false;
+    
+    public static class InvalidFileFormatException extends Exception {
 
-    public NewSumInstance() {
+        private static final String message = "Format expected \n"
+                + "wsdl:the_actual_url\n"
+                + "namespace:the_actual_namespace\n"
+                + "soap:the_actual_soap_location_url\n"
+                + "Invalid file format in file \n";
+
+        public InvalidFileFormatException(String path) {
+            super(message + path);
+        }
     }
 
     /**
@@ -47,12 +68,18 @@ public class NewSumInstance {
      * @see NewSumWS.pdf for more info.
      */
     public static LinksData getLinkLabels() throws Exception {
-        SoapObject request = new SoapObject(NAMESPACE, GET_LINK_LABELS);
-        androidHttpTransport = new HttpTransportSE(URL);
+        initializeLinksFromFile(); //sets soapAction ,namespace,url
+        SoapObject request = new SoapObject(namespace, GET_LINK_LABELS);
+        androidHttpTransport = new HttpTransportSE(url);
         envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.dotNet = false;
         envelope.setOutputSoapObject(request);
-        androidHttpTransport.call(SOAP_ACTION, envelope);
+        androidHttpTransport.call(soapAction, envelope);
+        Object attempt = envelope.getResponse();
+        if (attempt.getClass() == SoapFault.class) {
+            SoapFault fault = (SoapFault) envelope.getResponse();
+            throw fault;
+        }
         SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
         String sLinks = resultsRequestSOAP.getProperty("return").toString();
         return new LinksData(sLinks);
@@ -72,24 +99,30 @@ public class NewSumInstance {
      * @see NewSumWS.pdf for more info.
      */
     public static CategoriesData getCategories(ArrayList<String> alUserSources) throws Exception {
-        SoapObject request = new SoapObject(NAMESPACE, READ_CATEGORIES_METHOD);
-        androidHttpTransport = new HttpTransportSE(URL);
+        initializeLinksFromFile(); //sets soapAction ,namespace,url
+        SoapObject request = new SoapObject(namespace, READ_CATEGORIES_METHOD);
+        androidHttpTransport = new HttpTransportSE(url);
         envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.dotNet = false;
         request.addProperty("sUserSources", JSon.jsonize(alUserSources));
         envelope.setOutputSoapObject(request);
-        androidHttpTransport.call(SOAP_ACTION, envelope);
+        androidHttpTransport.call(soapAction, envelope);
+        Object attempt = envelope.getResponse();
+        if (attempt.getClass() == SoapFault.class) {
+            SoapFault fault = (SoapFault) envelope.getResponse();
+            throw fault;
+        }
         SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
         String sCategories = resultsRequestSOAP.getProperty("return").toString();
         return new CategoriesData(sCategories);
     }
 
     /**
-     * Returns all topics that correspond the selected category and
-     * user sources as a TopicsData object.
+     * Returns all topics that correspond the selected category and user sources
+     * as a TopicsData object.
      *
-     * The Topics are sorted first of all by date, and secondly by each
-     * Topic's article count for the specific date.
+     * The Topics are sorted first of all by date, and secondly by each Topic's
+     * article count for the specific date.
      *
      * @param alUserSources The user selected Sources passed as an ArrayList of
      * strings. If "All" is the first string in the ArrayList or null is passed
@@ -100,14 +133,20 @@ public class NewSumInstance {
      * @see NewSumWS.pdf for more info.
      */
     public static TopicsData getTopics(ArrayList<String> alUserSources, String sCategory) throws Exception {
-        SoapObject request = new SoapObject(NAMESPACE, READ_TOPICS_METHOD);
-        androidHttpTransport = new HttpTransportSE(URL);
+        initializeLinksFromFile(); //sets soapAction ,namespace,url
+        SoapObject request = new SoapObject(namespace, READ_TOPICS_METHOD);
+        androidHttpTransport = new HttpTransportSE(url);
         envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.dotNet = false;
         request.addProperty("sUserSources", JSon.jsonize(alUserSources));
         request.addProperty("sCategory", JSon.jsonize(sCategory));
         envelope.setOutputSoapObject(request);
-        androidHttpTransport.call(SOAP_ACTION, envelope);
+        androidHttpTransport.call(soapAction, envelope);
+        Object attempt = envelope.getResponse();
+        if (attempt.getClass() == SoapFault.class) {
+            SoapFault fault = (SoapFault) envelope.getResponse();
+            throw fault;
+        }
         SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
         String sTopics = resultsRequestSOAP.getProperty("return").toString();
         return new TopicsData(sTopics);
@@ -129,14 +168,20 @@ public class NewSumInstance {
      */
     public static TopicsData getTopicByKeyword(String sKeyword,
             ArrayList<String> alUserSources) throws Exception {
-        SoapObject request = new SoapObject(NAMESPACE, GET_TOPICS_BY_KEYWORD);
-        androidHttpTransport = new HttpTransportSE(URL);
+        initializeLinksFromFile(); //sets soapAction ,namespace,url
+        SoapObject request = new SoapObject(namespace, GET_TOPICS_BY_KEYWORD);
+        androidHttpTransport = new HttpTransportSE(url);
         envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.dotNet = false;
         request.addProperty("sKeyword", JSon.jsonize(sKeyword));
         request.addProperty("sUserSources", JSon.jsonize(alUserSources));
         envelope.setOutputSoapObject(request);
-        androidHttpTransport.call(SOAP_ACTION, envelope);
+        androidHttpTransport.call(soapAction, envelope);
+        Object attempt = envelope.getResponse();
+        if (attempt.getClass() == SoapFault.class) {
+            SoapFault fault = (SoapFault) envelope.getResponse();
+            throw fault;
+        }
         SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
         String sTopics = resultsRequestSOAP.getProperty("return").toString();
         return new TopicsData(sTopics);
@@ -160,16 +205,68 @@ public class NewSumInstance {
      * @see NewSumWS.pdf for more info.
      */
     public static SummaryData getSummary(String sTopicID, ArrayList<String> alUserSources) throws Exception {
-        SoapObject request = new SoapObject(NAMESPACE, GET_SUMMARY_METHOD);
-        androidHttpTransport = new HttpTransportSE(URL);
+        initializeLinksFromFile(); //sets soapAction ,namespace,url
+        SoapObject request = new SoapObject(namespace, GET_SUMMARY_METHOD);
+        androidHttpTransport = new HttpTransportSE(url);
         envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.dotNet = false;
-        request.addProperty("sCategory", JSon.jsonize(sTopicID));
+        request.addProperty("sTopicID", JSon.jsonize(sTopicID));
         request.addProperty("sUserSources", JSon.jsonize(alUserSources));
         envelope.setOutputSoapObject(request);
-        androidHttpTransport.call(SOAP_ACTION, envelope);
+        androidHttpTransport.call(soapAction, envelope);
+        Object attempt = envelope.getResponse();
+        if (attempt.getClass() == SoapFault.class) {
+            SoapFault fault = (SoapFault) envelope.getResponse();
+            throw fault;
+        }
         SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
         String sSummary = resultsRequestSOAP.getProperty("return").toString();
         return new SummaryData(sSummary);
+    }
+
+    private static void initializeLinksFromFile() throws FileNotFoundException,InvalidFileFormatException{
+        //reads SOAP_ACTION , URL and NAMESPACE
+        //from file , if the file doesn't exist defaults are used. if IOException occurs throws exception
+        try{
+            if(!initialized){
+                String filename=FILENAME;
+                InputStream fis = new FileInputStream(filename);
+                BufferedReader br = new BufferedReader(new InputStreamReader(fis, Charset.forName("UTF-8")));
+                String line;
+                int iteration=0;
+                while ((line = br.readLine()) != null && iteration<FILE_SYNTAX.length) {
+/*                  debug file read
+                    System.out.println(line);
+*/
+                    //for everyline in file if array of FILE_SYNTAX is not exceeded 
+                    String check=line.substring(0,(FILE_SYNTAX[iteration]).length());
+                    if(check.equals(FILE_SYNTAX[iteration])){//if the format is correct
+                        switch(iteration){//order matters 
+                            case 0:
+                                url=line.substring(FILE_SYNTAX[iteration].length(),line.length()).trim();
+                                break;
+                            case 1:
+                                namespace=line.substring(FILE_SYNTAX[iteration].length(),line.length()).trim();
+                                break;
+                            case 2:
+                                soapAction=line.substring(FILE_SYNTAX[iteration].length(),line.length()).trim();
+                                break;
+                        }
+                    }
+                    else{
+                        throw new InvalidFileFormatException(FILENAME);
+                    }
+                    iteration++;
+                }
+/*                debug file read
+                  System.out.println(url+"\n"+namespace+"\n"+soapAction);
+*/
+                initialized=true;
+            }
+        }catch(FileNotFoundException e){
+            throw e;
+        }catch(IOException e){
+            throw new InvalidFileFormatException(FILENAME);
+        }
     }
 }

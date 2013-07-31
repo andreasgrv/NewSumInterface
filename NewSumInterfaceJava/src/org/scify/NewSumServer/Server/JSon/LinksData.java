@@ -15,13 +15,14 @@ import java.util.ArrayList;
  * and easily transform between object and JSON format
  */
 public class LinksData extends ArrayList <LinkLabelData> implements JSonizable{
-    
+
     /**
-     * Make new LinksData
+     * Make new empty LinksData 
      * 
      * @return a empty instance of LinksData.
      */
-    public LinksData() {
+    public LinksData(){ //you may want to fill it up using add
+        
     }
     
     /**
