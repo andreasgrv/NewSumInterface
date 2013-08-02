@@ -1,0 +1,3 @@
+wsdl:http://83.212.110.120:8080/NewSumFreeService/NewSumFreeService?wsdl
+namespace:http://NewSumFreeService.Server.NewSumServer.scify.org/
+soap:http://83.212.110.120:8080/NewSumFreeService/NewSumFreeService
