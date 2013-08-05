@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  untitled.py
+#  NewSumInterface.py
 #  
 #  Copyright 2013  <scify@scifyTerminal2>
 #  
