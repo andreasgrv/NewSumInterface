@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
 #  NewSumInterface.py
@@ -21,7 +21,6 @@
 #  MA 02110-1301, USA.
 #  
 #  
-
 import json
 from suds.client import Client
 
@@ -49,7 +48,7 @@ class NewSumInterface:
         if os.path.isfile(filename):
 	    dataLines = self._readData(filename)
 	else: 
-	    raise IOError("File not There. Be carefull sir.")
+	    raise IOError("File %s not There. Be careful sir." %os.path.basename(filename))
         
 	# check that datalines are correct
         if len(dataLines) < len(LABELS):
