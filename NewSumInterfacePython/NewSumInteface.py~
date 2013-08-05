@@ -49,7 +49,7 @@ class NewSumInterface:
         if os.path.isfile(filename):
 	    dataLines = self._readData(filename)
 	else: 
-	    raise IOError("File not There. Be careful sir.")
+	    raise IOError("File not There. Be carefull sir.")
         
 	# check that datalines are correct
         if len(dataLines) < len(LABELS):
