@@ -30,7 +30,12 @@ import org.scify.NewSumServer.Server.JSon.TopicsData;
  */
 public class NewSumInstance {
 
+    private static final String USERDIR = System.getProperty("user.dir", ".");
+    private static final String SEPARATOR = System.getProperty("file.separator", "/");
+    private static final String DATAFOLDER = "data";
     private static final String FILENAME = "properties.dat";
+    private static String FILEPATH = 
+            USERDIR + SEPARATOR + DATAFOLDER + SEPARATOR +FILENAME;
     private static final String GET_LINK_LABELS = "getLinkLabels";
     private static final String READ_CATEGORIES_METHOD = "getCategories";
     private static final String READ_TOPICS_METHOD = "getTopics";
@@ -224,12 +229,56 @@ public class NewSumInstance {
         return new SummaryData(sSummary);
     }
 
+    public static String getUrl() throws Exception{
+        initializeLinksFromFile();
+        return url;
+    }
+    
+    public static String getNamespace() throws Exception{
+        initializeLinksFromFile();
+        return namespace;
+    }
+        
+    public static String getSoapAction() throws Exception{
+        initializeLinksFromFile();
+        return soapAction;
+    }
+    
+    public static String getUrlEmptyOnFail(){
+        try{
+            initializeLinksFromFile();
+            return url;
+        }catch(Exception e){
+            return "";
+        }
+    }
+    
+    public static String getNamespaceEmptyOnFail(){
+        try{
+            initializeLinksFromFile();
+            return namespace;
+        }catch(Exception e){
+            return "";
+        }
+    }
+        
+    public static String getSoapActionEmptyOnFail(){
+        try{
+            initializeLinksFromFile();
+            return soapAction;
+        }catch(Exception e){
+            return "";
+        }
+    }
+    
+
+    
     private static void initializeLinksFromFile() throws FileNotFoundException,InvalidFileFormatException{
         //reads SOAP_ACTION , URL and NAMESPACE
         //from file , if the file doesn't exist defaults are used. if IOException occurs throws exception
         try{
             if(!initialized){
-                String filename=FILENAME;
+                String filename=FILEPATH;
                 InputStream fis = new FileInputStream(filename);
                 BufferedReader br = new BufferedReader(new InputStreamReader(fis, Charset.forName("UTF-8")));
                 String line;

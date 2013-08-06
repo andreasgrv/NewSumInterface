@@ -19,6 +19,14 @@ public class SummaryData implements JSonizable{
     private ArrayList <SnippetData> snippets;
 
     /**
+     * Make new SummaryData
+     * 
+     * @return a empty instance of SummaryData.
+     */
+    public SummaryData(){
+        
+    }
+    /**
      * Make new SummaryData from JSON String
      * 
      * @param json input String containing the JSON code for the object
