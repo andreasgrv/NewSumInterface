@@ -5,11 +5,11 @@
 package newsuminterface;
 
 import java.util.ArrayList;
-import org.scify.NewSumServer.Server.Adaptor.NewSumInstance;
-import org.scify.NewSumServer.Server.JSon.CategoriesData;
-import org.scify.NewSumServer.Server.JSon.LinksData;
-import org.scify.NewSumServer.Server.JSon.SummaryData;
-import org.scify.NewSumServer.Server.JSon.TopicsData;
+import org.scify.NewSumInterface.Server.Adaptor.NewSumInstance;
+import org.scify.NewSumInterface.Server.JSon.CategoriesData;
+import org.scify.NewSumInterface.Server.JSon.LinksData;
+import org.scify.NewSumInterface.Server.JSon.SummaryData;
+import org.scify.NewSumInterface.Server.JSon.TopicsData;
 
 /**
  *

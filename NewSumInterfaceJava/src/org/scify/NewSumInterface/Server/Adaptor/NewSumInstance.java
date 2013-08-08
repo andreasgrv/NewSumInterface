@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.scify.NewSumServer.Server.Adaptor;
+package org.scify.NewSumInterface.Server.Adaptor;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -18,11 +18,11 @@ import org.ksoap2.SoapFault;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
-import org.scify.NewSumServer.Server.JSon.CategoriesData;
-import org.scify.NewSumServer.Server.JSon.JSon;
-import org.scify.NewSumServer.Server.JSon.LinksData;
-import org.scify.NewSumServer.Server.JSon.SummaryData;
-import org.scify.NewSumServer.Server.JSon.TopicsData;
+import org.scify.NewSumInterface.Server.JSon.CategoriesData;
+import org.scify.NewSumInterface.Server.JSon.JSon;
+import org.scify.NewSumInterface.Server.JSon.LinksData;
+import org.scify.NewSumInterface.Server.JSon.SummaryData;
+import org.scify.NewSumInterface.Server.JSon.TopicsData;
 
 /**
  *
@@ -32,10 +32,9 @@ public class NewSumInstance {
 
     private static final String USERDIR = System.getProperty("user.dir", ".");
     private static final String SEPARATOR = System.getProperty("file.separator", "/");
-    private static final String DATAFOLDER = "data";
     private static final String FILENAME = "properties.dat";
     private static String FILEPATH = 
-            USERDIR + SEPARATOR + DATAFOLDER + SEPARATOR +FILENAME;
+            USERDIR + SEPARATOR + SEPARATOR +FILENAME;
     private static final String GET_LINK_LABELS = "getLinkLabels";
     private static final String READ_CATEGORIES_METHOD = "getCategories";
     private static final String READ_TOPICS_METHOD = "getTopics";
@@ -48,6 +47,14 @@ public class NewSumInstance {
     private static String namespace;
     private static String soapAction;
     private static boolean initialized=false;
+    
+    static{
+        try{
+            initializeLinksFromFile();
+        }catch(Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+    }
     
     public static class InvalidFileFormatException extends Exception {
 
@@ -73,7 +80,6 @@ public class NewSumInstance {
      * @see NewSumWS.pdf for more info.
      */
     public static LinksData getLinkLabels() throws Exception {
-        initializeLinksFromFile(); //sets soapAction ,namespace,url
         SoapObject request = new SoapObject(namespace, GET_LINK_LABELS);
         androidHttpTransport = new HttpTransportSE(url);
         envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
@@ -104,7 +110,6 @@ public class NewSumInstance {
      * @see NewSumWS.pdf for more info.
      */
     public static CategoriesData getCategories(ArrayList<String> alUserSources) throws Exception {
-        initializeLinksFromFile(); //sets soapAction ,namespace,url
         SoapObject request = new SoapObject(namespace, READ_CATEGORIES_METHOD);
         androidHttpTransport = new HttpTransportSE(url);
         envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
@@ -138,7 +143,6 @@ public class NewSumInstance {
      * @see NewSumWS.pdf for more info.
      */
     public static TopicsData getTopics(ArrayList<String> alUserSources, String sCategory) throws Exception {
-        initializeLinksFromFile(); //sets soapAction ,namespace,url
         SoapObject request = new SoapObject(namespace, READ_TOPICS_METHOD);
         androidHttpTransport = new HttpTransportSE(url);
         envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
@@ -173,7 +177,6 @@ public class NewSumInstance {
      */
     public static TopicsData getTopicByKeyword(String sKeyword,
             ArrayList<String> alUserSources) throws Exception {
-        initializeLinksFromFile(); //sets soapAction ,namespace,url
         SoapObject request = new SoapObject(namespace, GET_TOPICS_BY_KEYWORD);
         androidHttpTransport = new HttpTransportSE(url);
         envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
@@ -210,7 +213,6 @@ public class NewSumInstance {
      * @see NewSumWS.pdf for more info.
      */
     public static SummaryData getSummary(String sTopicID, ArrayList<String> alUserSources) throws Exception {
-        initializeLinksFromFile(); //sets soapAction ,namespace,url
         SoapObject request = new SoapObject(namespace, GET_SUMMARY_METHOD);
         androidHttpTransport = new HttpTransportSE(url);
         envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
@@ -230,45 +232,27 @@ public class NewSumInstance {
     }
 
     public static String getUrl() throws Exception{
-        initializeLinksFromFile();
         return url;
     }
     
     public static String getNamespace() throws Exception{
-        initializeLinksFromFile();
         return namespace;
     }
         
     public static String getSoapAction() throws Exception{
-        initializeLinksFromFile();
         return soapAction;
     }
     
     public static String getUrlEmptyOnFail(){
-        try{
-            initializeLinksFromFile();
             return url;
-        }catch(Exception e){
-            return "";
-        }
     }
     
     public static String getNamespaceEmptyOnFail(){
-        try{
-            initializeLinksFromFile();
             return namespace;
-        }catch(Exception e){
-            return "";
-        }
     }
         
     public static String getSoapActionEmptyOnFail(){
-        try{
-            initializeLinksFromFile();
             return soapAction;
-        }catch(Exception e){
-            return "";
-        }
     }
     
 

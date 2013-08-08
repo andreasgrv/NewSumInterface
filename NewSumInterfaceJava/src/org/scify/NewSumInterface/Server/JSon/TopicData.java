@@ -1,4 +1,4 @@
-package org.scify.NewSumServer.Server.JSon;
+package org.scify.NewSumInterface.Server.JSon;
 
 import java.util.ArrayList;
 import java.util.Calendar;
