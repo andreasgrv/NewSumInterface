@@ -41,7 +41,7 @@ class NewSumFreeService extends SoapClient {
      * @throws SOAPException
      * @return array(string) The categories relevant to the userSources specified.
      */
-    public function getCategories($userSources){
+    public function getCategories($userSources = null){
         $post=array('parameters' => array('sUserSources' => json_encode($userSources)));
         try { 
             $response = $this->__soapCall('getCategories',$post)->return;
@@ -63,7 +63,7 @@ class NewSumFreeService extends SoapClient {
      * @return array(Topics) Array of Topics according to search.
      * See documentation for more info on the array(Topics) structure.
      */
-    public function getTopics($userSources,$category) {
+    public function getTopics($category,$userSources = null) {
         $post=array('parameters' => array('sUserSources' => json_encode($userSources),
             'sCategory' => json_encode($category)));
         try { 
@@ -85,7 +85,7 @@ class NewSumFreeService extends SoapClient {
      * @return array(topics) topics found using the keyword to search amongst userSources topics.
      * See documentation for more info on the array(topics) structure.
      */
-    public function getTopicsByKeyword($keyword,$userSources) {
+    public function getTopicsByKeyword($keyword,$userSources = null) {
         $post=array('parameters' => array('sKeyword' => json_encode($keyword),
                 'sUserSources' => json_encode($userSources)));
             try { 
@@ -108,7 +108,7 @@ class NewSumFreeService extends SoapClient {
      * The whole list can also be obtained by calling getLinkLabels and processing the links. 
      * @return getSummaryResponse
      */
-    public function getSummary($topicID,$userSources) {
+    public function getSummary($topicID,$userSources = null) {
         $post=array('parameters' => array('sTopicID' => json_encode($topicID),
                 'sUserSources' => json_encode($userSources)));
         try { 
