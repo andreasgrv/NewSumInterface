@@ -68,7 +68,6 @@ const QString Topic::imagekey="imageUrl";
 const QString Topic::categoryarg="sCategory";
 
 Topic::Topic(QJsonObject &json){
-	qDebug() << json;
 	id=json.take(idkey).toString();
 	title=json.take(titlekey).toString();
 	QJsonValue dateval=json.take(datekey);
@@ -112,6 +111,106 @@ QDateTime Topic::getDateTime() const{
 	return date;
 }
 
+//---------------------------Summary--------------------------------------
+
+//-------Source--subclass-------------------------------------------------
+const QString Summary::Source::urlkey="url";
+const QString Summary::Source::namekey="name";
+const QString Summary::Source::imageurlkey="imageUrl";
+
+Summary::Source::Source(QJsonObject &json){
+	url=json.take(urlkey).toString();
+	name=json.take(namekey).toString();
+	imageUrl=json.take(imageurlkey).toString();
+}
+
+//-------Snippet--subclass-------------------------------------------------
+const QString Summary::Snippet::summarykey="summary";
+const QString Summary::Snippet::sourceurlkey="sourceUrl";
+const QString Summary::Snippet::sourcenamekey="sourceName";
+const QString Summary::Snippet::feedurlkey="feedUrl";
+
+Summary::Snippet::Snippet(QJsonObject &json){
+	summary=json.take(summarykey).toString();
+	sourceUrl=json.take(sourceUrl).toString();
+	sourceName=json.take(sourcenamekey).toString();
+	feedUrl=json.take(feedurlkey).toString();
+}
+
+//------rest-of-Summary---------------------------------------------------
+const QString Summary::topicidarg="sTopicID";
+const QString Summary::sourceskey="sources";
+const QString Summary::snippetskey="snippets";
+
+
+Summary::Summary(QJsonObject &json){
+	QJsonValue sourcesval=json.take(sourceskey);
+	QVariantList sourcesvar=sourcesval.toVariant().toList();
+	for(int i=0;i<sourcesvar.size();i++){
+		QJsonObject temp=QJsonObject::fromVariantMap(sourcesvar.at(i).value<QVariantMap>());
+		Source item(temp);
+		sources.push_back(item);	
+	}
+
+	QJsonValue snippetsval=json.take(snippetskey);
+	QVariantList snippetsvar=snippetsval.toVariant().toList();
+
+	for(int i=0;i<snippetsvar.size();i++){
+		QJsonObject temp=QJsonObject::fromVariantMap(snippetsvar.at(i).value<QVariantMap>());
+		Snippet item(temp);
+		snippets.push_back(item);
+	}
+}
+
+QList <QMap<QString,QString>> Summary::getSnippets(){
+	QList <QMap<QString,QString>> result;
+	for(Snippet each : snippets){
+		QMap <QString,QString> map;
+		map.insert(Snippet::summarykey,each.summary);
+		map.insert(Snippet::sourceurlkey,each.sourceUrl);
+		map.insert(Snippet::sourcenamekey,each.sourceName);
+		map.insert(Snippet::feedurlkey,each.feedUrl);
+		result.append(map);
+	}
+	return result;	
+}
+
+QList <QMap<QString,QString>> Summary::getSources(){
+	QList <QMap<QString,QString>> result;
+	for(Source each : sources){
+		QMap <QString,QString> map;
+		map.insert(Source::urlkey,each.url);
+		map.insert(Source::namekey,each.name);
+		map.insert(Source::imageurlkey,each.imageUrl);
+		result.append(map);
+	}
+	return result;	
+}
+
+QString Summary::asString(){
+	QString sourcestring="";
+	for(Source each : sources){
+		sourcestring+=each.name;
+		sourcestring+=" ";
+		sourcestring+=each.url;
+		sourcestring+=" ";
+		sourcestring+=each.imageUrl;
+		sourcestring+="\n";
+	}
+	QString snippetstring="";
+	for(Snippet each : snippets){
+		snippetstring+=each.summary;
+		snippetstring+=" ";
+		snippetstring+=each.sourceUrl;
+		snippetstring+=" ";
+		snippetstring+=each.sourceName;
+		snippetstring+=" ";
+		snippetstring+=each.feedUrl;
+		snippetstring+="\n";
+	}
+	QString result=sourcestring+"\n"+snippetstring;
+	return result;
+}
 
 //--------------------------NewSumService----------------------------------
 NewSumService::NewSumService(const QString &endpoint,const QString &servicename){
@@ -178,5 +277,20 @@ QList <Topic> NewSumService::getTopics(const QString &category){
 		Topic item(temp);
 		result.append(item);
 	}
+	return result;
+}
+
+Summary NewSumService::getSummary(const QString &topicID){
+	const QString method = GETSUMMARY;
+	KDSoapMessage message,response;
+	QVariant topicidvar(topicID);
+	message.addArgument(Summary::topicidarg,topicidvar);
+	response= client->call(method,message);
+	QString json=response.arguments()[0].value().toString();
+	QByteArray bytes=json.toLocal8Bit();
+	QJsonDocument parsed=QJsonDocument::fromJson(bytes);
+	QVariant variant=parsed.toVariant();
+	QJsonObject summary=QJsonObject::fromVariantMap(variant.value<QVariantMap>());
+	Summary result(summary);
 	return result;
 }

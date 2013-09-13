@@ -46,6 +46,9 @@ int main(int argc,char * argv[]){
 	for(int i=0;i<result3.size();i++){
 		qDebug()<<result3.at(i).asString(); 
         } 
+	QString topicID="9613b79a-288f-490a-98bd-056d65375686";
+	Summary result4=client.getSummary(topicID);
+	qDebug() << result4.asString();
 	return 0;
 
 

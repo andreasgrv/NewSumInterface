@@ -13,8 +13,8 @@ MAKEFILE      = Makefile
 CC            = gcc
 CXX           = g++
 DEFINES       = -DQT_NO_DEBUG -DQT_XML_LIB -DQT_NETWORK_LIB -DQT_GUI_LIB -DQT_CORE_LIB
-CFLAGS        = -pipe -O2 -Wall -W -D_REENTRANT -fPIE $(DEFINES)
-CXXFLAGS      = -pipe -O2 -Wall -W -D_REENTRANT -fPIE $(DEFINES)
+CFLAGS        = -pipe -O2 -Wall -W -D_REENTRANT -fPIE -std=c++0x $(DEFINES)
+CXXFLAGS      = -pipe -O2 -Wall -W -D_REENTRANT -fPIE -std=c++0x $(DEFINES)
 INCPATH       = -I/opt/Qt5.1.1/5.1.1/gcc_64/mkspecs/linux-g++ -I. -I. -I/opt/Qt5.1.1/5.1.1/gcc_64/include -I/opt/Qt5.1.1/5.1.1/gcc_64/include/QtXml -I/opt/Qt5.1.1/5.1.1/gcc_64/include/QtNetwork -I/opt/Qt5.1.1/5.1.1/gcc_64/include/QtGui -I/opt/Qt5.1.1/5.1.1/gcc_64/include/QtCore -I.
 LINK          = g++
 LFLAGS        = -Wl,-O1 -Wl,-rpath,/opt/Qt5.1.1/5.1.1/gcc_64 -Wl,-rpath,/opt/Qt5.1.1/5.1.1/gcc_64/lib

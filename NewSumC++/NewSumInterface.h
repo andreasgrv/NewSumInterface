@@ -1,8 +1,10 @@
 #ifndef NEWSUMINTERFACE_H
 #define NEWSUMINTERFACE_H
+#include <vector>
 #include <QDate>
 #include <QDateTime>
 #include <QTime>
+#include <QMap>
 #include <QDebug>
 #include <QJsonDocument> 
 #include <QByteArray>
@@ -81,7 +83,46 @@ class Topic{
 };
 
 class Summary{
+	private:
+		class Source{
+			public:
+				static const QString urlkey;
+				static const QString namekey;
+				static const QString imageurlkey;
 
+				QString url;
+				QString name;
+				QString imageUrl;
+
+				Source(QJsonObject &json);
+		};
+
+		class Snippet{
+			public:
+				static const QString summarykey;
+				static const QString sourceurlkey;
+				static const QString sourcenamekey;
+				static const QString feedurlkey;
+
+				QString summary;
+				QString sourceUrl;
+				QString sourceName;
+				QString feedUrl;
+
+				Snippet(QJsonObject &json);
+		};
+		std::vector <Source> sources;
+		std::vector <Snippet> snippets;
+	public:
+		static const QString topicidarg;
+		static const QString sourceskey;
+		static const QString snippetskey;
+
+		Summary(QJsonObject &json);
+		QList <QMap<QString,QString>> getSnippets();
+		QList <QMap<QString,QString>> getSources();
+		QString asString();
+		
 };
 
 
@@ -100,6 +141,7 @@ class NewSumService{
 		QList <Source> getSources();
 		QList <QString> getCategories();
 		QList <Topic> getTopics(const QString &category);
+		Summary getSummary(const QString &topicID);
 		
 };
 
