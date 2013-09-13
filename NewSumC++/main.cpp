@@ -31,24 +31,22 @@ int main(int argc,char * argv[]){
 	const QString messageNamespace = QLatin1String("http://NewSumFreeService.Server.NewSumServer.scify.org/");
 	NewSumService client(endPoint,messageNamespace);
 
-	QList <QString> result=client.getCategories();
+	QList <QString> category=client.getCategories();
 
-        for(int i=0;i<result.size();i++){
-		qDebug()<<result.at(i);
+        for(int i=0;i<category.size();i++){
+		QList <Topic> topics=client.getTopics(category.at(i));
+		for(int i=0;i<topics.size();i++){
+			QString topicID=topics.at(i).getID();
+			Summary result4=client.getSummary(topicID);
+		}
+
         }
 
 	QList <Source> result2=client.getSources();
         for(int i=0;i<result2.size();i++){
 		qDebug()<<result2.at(i).asString(); 
         }
-	QString category="Πολιτισμός";
-	QList <Topic> result3=client.getTopics(category);
-	for(int i=0;i<result3.size();i++){
-		qDebug()<<result3.at(i).asString(); 
-        } 
-	QString topicID="9613b79a-288f-490a-98bd-056d65375686";
-	Summary result4=client.getSummary(topicID);
-	qDebug() << result4.asString();
+	 
 	return 0;
 
 

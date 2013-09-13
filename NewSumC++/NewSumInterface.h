@@ -133,6 +133,8 @@ class NewSumService{
 
 	private:
 		KDSoapClientInterface *client;
+		static int topicCounter; //delete me
+		static int summaryCounter; //delete me
 	
 	public:
 

@@ -213,6 +213,10 @@ QString Summary::asString(){
 }
 
 //--------------------------NewSumService----------------------------------
+
+int NewSumService::topicCounter=0;
+int NewSumService::summaryCounter=0;
+
 NewSumService::NewSumService(const QString &endpoint,const QString &servicename){
 	client= new KDSoapClientInterface(endpoint,servicename);
 	client->setSoapVersion(KDSoapClientInterface::SOAP1_1);
@@ -240,7 +244,6 @@ QList <Source> NewSumService::getSources(){
 	}
 	QByteArray bytes=json.toLocal8Bit();
 	QJsonDocument parsed=QJsonDocument::fromJson(bytes);
-	
 	QVariantList variants=parsed.array().toVariantList();
 	QList <Source> result;
 	for(int i=0;i<variants.size();i++){
@@ -272,13 +275,14 @@ QList <QString> NewSumService::getCategories(){
 }
 
 QList <Topic> NewSumService::getTopics(const QString &category){
+	summaryCounter=0;
 	const QString method = GETTOPICS;
 	KDSoapMessage message,response;
 	QVariant categoryvar(category);
 	message.addArgument(Topic::categoryarg,categoryvar);
 	response= client->call(method,message);
 	QString json=response.arguments()[0].value().toString();
-	std::ofstream file (method.toStdString()+".json");
+	std::ofstream file (method.toStdString()+std::to_string(topicCounter)+".json");
 	if (file.is_open()){
 		file << json.toStdString();
 		file.close();
@@ -292,6 +296,7 @@ QList <Topic> NewSumService::getTopics(const QString &category){
 		Topic item(temp);
 		result.append(item);
 	}
+	topicCounter++;
 	return result;
 }
 
@@ -302,7 +307,7 @@ Summary NewSumService::getSummary(const QString &topicID){
 	message.addArgument(Summary::topicidarg,topicidvar);
 	response= client->call(method,message);
 	QString json=response.arguments()[0].value().toString();
-	std::ofstream file (method.toStdString()+".json");
+	std::ofstream file (method.toStdString()+std::to_string(topicCounter)+"."+std::to_string(summaryCounter)+".json");
 	if (file.is_open()){
 		file << json.toStdString();
 		file.close();
@@ -312,5 +317,6 @@ Summary NewSumService::getSummary(const QString &topicID){
 	QVariant variant=parsed.toVariant();
 	QJsonObject summary=QJsonObject::fromVariantMap(variant.value<QVariantMap>());
 	Summary result(summary);
+	summaryCounter++;
 	return result;
 }
