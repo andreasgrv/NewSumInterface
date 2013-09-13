@@ -47,3 +47,4 @@ SOURCES += doxygen.cpp \
 
 QT += network
 QT += xml
+QT += gui

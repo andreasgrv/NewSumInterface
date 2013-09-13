@@ -232,10 +232,15 @@ QList <Source> NewSumService::getSources(){
 	const QString method = GETSOURCES;
         KDSoapMessage message,response;
         response= client->call(method,message);
-//        qDebug("%s", qPrintable(response.arguments()[0].value().toString()));
 	QString json=response.arguments()[0].value().toString();
+	std::ofstream file (method.toStdString()+".json");
+	if (file.is_open()){
+		file << json.toStdString();
+		file.close();
+	}
 	QByteArray bytes=json.toLocal8Bit();
 	QJsonDocument parsed=QJsonDocument::fromJson(bytes);
+	
 	QVariantList variants=parsed.array().toVariantList();
 	QList <Source> result;
 	for(int i=0;i<variants.size();i++){
@@ -250,6 +255,11 @@ QList <QString> NewSumService::getCategories(){
         KDSoapMessage message,response;
         response= client->call(method,message);
 	QString json=response.arguments()[0].value().toString();
+	std::ofstream file (method.toStdString()+".json");
+	if (file.is_open()){
+		file << json.toStdString();
+		file.close();
+	}
 	QByteArray bytes=json.toLocal8Bit();
 	QJsonDocument parsed=QJsonDocument::fromJson(bytes);
 	QVariantList variants=parsed.array().toVariantList();
@@ -268,6 +278,11 @@ QList <Topic> NewSumService::getTopics(const QString &category){
 	message.addArgument(Topic::categoryarg,categoryvar);
 	response= client->call(method,message);
 	QString json=response.arguments()[0].value().toString();
+	std::ofstream file (method.toStdString()+".json");
+	if (file.is_open()){
+		file << json.toStdString();
+		file.close();
+	}
 	QByteArray bytes=json.toLocal8Bit();
 	QJsonDocument parsed=QJsonDocument::fromJson(bytes);
 	QVariantList variants=parsed.array().toVariantList();
@@ -287,6 +302,11 @@ Summary NewSumService::getSummary(const QString &topicID){
 	message.addArgument(Summary::topicidarg,topicidvar);
 	response= client->call(method,message);
 	QString json=response.arguments()[0].value().toString();
+	std::ofstream file (method.toStdString()+".json");
+	if (file.is_open()){
+		file << json.toStdString();
+		file.close();
+	}
 	QByteArray bytes=json.toLocal8Bit();
 	QJsonDocument parsed=QJsonDocument::fromJson(bytes);
 	QVariant variant=parsed.toVariant();

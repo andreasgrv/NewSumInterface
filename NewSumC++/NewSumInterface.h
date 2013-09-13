@@ -1,6 +1,8 @@
 #ifndef NEWSUMINTERFACE_H
 #define NEWSUMINTERFACE_H
 #include <vector>
+#include <iostream>
+#include <fstream>
 #include <QDate>
 #include <QDateTime>
 #include <QTime>
