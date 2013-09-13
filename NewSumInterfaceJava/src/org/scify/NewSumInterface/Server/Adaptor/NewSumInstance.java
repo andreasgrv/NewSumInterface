@@ -34,7 +34,7 @@ public class NewSumInstance {
     private static final String SEPARATOR = System.getProperty("file.separator", "/");
     private static final String FILENAME = "properties.dat";
     private static String FILEPATH = 
-            USERDIR + SEPARATOR + SEPARATOR +FILENAME;
+            USERDIR + SEPARATOR +FILENAME;
     private static final String GET_LINK_LABELS = "getLinkLabels";
     private static final String READ_CATEGORIES_METHOD = "getCategories";
     private static final String READ_TOPICS_METHOD = "getTopics";
